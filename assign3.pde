@@ -7,11 +7,25 @@ final int START_BUTTON_H = 60;
 final int START_BUTTON_X = 248;
 final int START_BUTTON_Y = 360;
 
+boolean downPressed=false,leftPressed=false,rightPressed=false;
+boolean downMove=false,rightMove=false,leftMove=false,move=false;
+
+int groundhogX,groundhogY;
+int groundhogDownX=1000,groundhogDownY=-1000;
+int groundhogLeftX=1000,groundhogLeftY=-1000;
+int groundhogRightX=1000,groundhogRightY=-1000;
+int distance;
+int a=0;
+int soilMove=0;
+
 PImage title, gameover, startNormal, startHovered, restartNormal, restartHovered;
-PImage bg, soil8x24;
+PImage bg,soil0 ,soil1,soil2,soil3,soil4,soil5;
+PImage life;
+PImage stone1,stone2;
+PImage groundhog,groundhogDown,groundhogRight,groundhogLeft;
 
 // For debug function; DO NOT edit or remove this!
-int playerHealth = 0;
+int playerHealth = 2;
 float cameraOffsetY = 0;
 boolean debugMode = false;
 
@@ -25,7 +39,22 @@ void setup() {
 	startHovered = loadImage("img/startHovered.png");
 	restartNormal = loadImage("img/restartNormal.png");
 	restartHovered = loadImage("img/restartHovered.png");
-	soil8x24 = loadImage("img/soil8x24.png");
+
+  groundhog = loadImage("img/groundhogIdle.png");
+  groundhogDown = loadImage("img/groundhogDown.png");
+  groundhogLeft = loadImage("img/groundhogLeft.png");
+  groundhogRight = loadImage("img/groundhogRight.png");
+  
+  soil0 = loadImage("img/soil0.png");
+  soil1 = loadImage("img/soil1.png");
+  soil2 = loadImage("img/soil2.png");
+  soil3 = loadImage("img/soil3.png");
+  soil4 = loadImage("img/soil4.png");
+  soil5 = loadImage("img/soil5.png");
+  life = loadImage("img/life.png");
+  stone1 = loadImage("img/stone1.png");
+  stone2 = loadImage("img/stone2.png");
+  groundhogX=320;groundhogY=80;
 }
 
 void draw() {
@@ -79,15 +108,174 @@ void draw() {
 		// Grass
 		fill(124, 204, 25);
 		noStroke();
-		rect(0, 160 - GRASS_HEIGHT, width, GRASS_HEIGHT);
+		rect(0, 160 - GRASS_HEIGHT, width, GRASS_HEIGHT-soilMove);
 
-		// Soil - REPLACE THIS PART WITH YOUR LOOP CODE!
-		image(soil8x24, 0, 160);
-
+		// Soil
+    for(int i=0;i<8;i++){
+      for(int r=0;r<4;r++){
+        image(soil0,i*80,160+r*80-soilMove);
+      }
+    }
+    for(int i=0;i<8;i++){
+      for(int r=0;r<4;r++){
+        image(soil1,i*80,480+r*80-soilMove);
+      }
+    }
+    for(int i=0,r=0;i<8;i++,r++){
+        image(stone1,i*80,160+r*80-soilMove);
+    }
+    for(int i=0;i<8;i++){
+      for(int r=0;r<4;r++){
+        image(soil2,i*80,800+r*80-soilMove);
+      }
+    }
+   
+    for(int i=0;i<8;i++){
+      for(int r=0;r<4;r++){
+        image(soil3,i*80,1120+r*80-soilMove);
+      }
+    }
+    for(int r=0;r<8;r++){
+      for(int i=0;i<8;i++){
+        if(i==1||i==2||i==5||i==6){
+          if(r==0||r==3||r==4||r==7){
+            image(stone1,i*80,800+r*80-soilMove);
+          }
+        }
+      }
+    }
+    for(int r=0;r<8;r++){
+      for(int i=0;i<8;i++){
+        if(i==0||i==3||i==4||i==7){
+          if(r==1||r==2||r==5||r==6){
+            image(stone1,i*80,800+r*80-soilMove);
+          }
+        }
+      }
+    }
+    for(int i=0;i<8;i++){
+      for(int r=0;r<4;r++){
+        image(soil4,i*80,1440+r*80-soilMove);
+      }
+    }
+    for(int i=0;i<8;i++){
+      for(int r=0;r<4;r++){
+        image(soil5,i*80,1760+r*80-soilMove);
+      }
+    }
+    for(int s=0;s<14;s++){
+      for(int i=0,r=7;i<8;i++,r--){
+        if(s==13||s==12||s==10||s==9||s==7||s==6||s==4||s==3||s==1||s==0){
+          image(stone1,-80*s+560+i*80,1440+r*80-soilMove);
+        }
+      }
+    }
+    for(int s=0;s<14;s++){
+      for(int i=0,r=7;i<8;i++,r--){
+        if(s==12||s==9||s==6||s==3||s==0){
+          image(stone2,-80*s+560+i*80,1440+r*80-soilMove);
+        }
+      }
+    }
+    
 		// Player
-
+    image(groundhog,groundhogX,groundhogY);
+      image(groundhogDown,groundhogDownX,groundhogDownY);
+      image(groundhogLeft,groundhogLeftX,groundhogLeftY);
+      image(groundhogRight,groundhogRightX,groundhogRightY);
+     if(a<20){
+      
+      if(move){
+        if(downPressed){        
+         distance+=5;
+         soilMove+=5;
+          println(a);
+         if(distance==80){
+            move = false;
+            groundhogY = groundhogDownY;
+            groundhogX = groundhogDownX;
+            groundhogDownX = 1000;
+            distance = 0;
+            a++;
+            downPressed = false;
+         
+        }        
+         }
+      if(leftPressed){
+          groundhogLeftX-=5;
+          groundhogLeftX=max(groundhogLeftX,0);
+          distance+=5;
+          if(distance==80){
+            move = false;
+            groundhogY = groundhogLeftY;
+            groundhogX = groundhogLeftX;
+            groundhogLeftX = 1000;
+            distance = 0;
+            leftPressed = false;
+          }    
+         }
+       if(rightPressed){
+            groundhogRightX+=5;
+            groundhogRightX=min(groundhogRightX,560);
+            distance+=5;
+            if(distance==80){
+              move = false;
+              groundhogY = groundhogRightY;
+              groundhogX = groundhogRightX;
+              groundhogRightX = 1000;
+              distance = 0;
+              rightPressed=false;
+            }
+          }        
+         }
+     }else{
+     
+      if(move){
+      if(downPressed){        
+          groundhogDownY+=5;
+          groundhogDownY=min(groundhogDownY,400);
+          distance+=5;
+          if(distance==80){
+            move = false;
+            groundhogY = groundhogDownY;
+            groundhogX = groundhogDownX;
+            groundhogDownX = 1000;
+            distance = 0;
+            downPressed = false;
+          }        
+         }
+      if(leftPressed){
+          groundhogLeftX-=5;
+          groundhogLeftX=max(groundhogLeftX,0);
+          distance+=5;
+          if(distance==80){
+            move = false;
+            groundhogY = groundhogLeftY;
+            groundhogX = groundhogLeftX;
+            groundhogLeftX = 1000;
+            distance = 0;
+            leftPressed = false;
+          }    
+         }
+       if(rightPressed){
+            groundhogRightX+=5;
+            groundhogRightX=min(groundhogRightX,560);
+            distance+=5;
+            if(distance==80){
+              move = false;
+              groundhogY = groundhogRightY;
+              groundhogX = groundhogRightX;
+              groundhogRightX = 1000;
+              distance = 0;
+              rightPressed=false;
+            }
+          }
+        }
+     }
 		// Health UI
-
+    for(int i=0;i<playerHealth;i++){
+      image(life,10+i*70,10);
+    }
 		break;
 
 		case GAME_OVER: // Gameover Screen
@@ -142,7 +330,40 @@ void keyPressed(){
       if(playerHealth < 5) playerHealth ++;
       break;
     }
+    if(key==CODED){
+    switch(keyCode){
+      case DOWN:
+        if(move==false){
+          groundhogDownY = groundhogY;
+          groundhogDownX = groundhogX;
+          groundhogX=1000;
+          downPressed=true;
+          move = true;
+          
+                }
+      break;
+      case RIGHT:
+        if(move==false){
+          groundhogRightY = groundhogY;
+          groundhogRightX = groundhogX;
+          groundhogX=1000;
+          rightPressed=true;
+          move = true;
+        }
+      break;
+      case LEFT:
+        if(move==false){
+          groundhogLeftY = groundhogY;
+          groundhogLeftX = groundhogX;
+          groundhogX=1000;
+          leftPressed=true;
+          move = true;
+        }
+      break;
+    }
+  }
 }
 
 void keyReleased(){
+  
 }
