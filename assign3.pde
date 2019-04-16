@@ -108,7 +108,7 @@ void draw() {
 		// Grass
 		fill(124, 204, 25);
 		noStroke();
-		rect(0, 160 - GRASS_HEIGHT, width, GRASS_HEIGHT-soilMove);
+		rect(0, 160 - GRASS_HEIGHT-soilMove, width, GRASS_HEIGHT);
 
 		// Soil
     for(int i=0;i<8;i++){
@@ -189,7 +189,6 @@ void draw() {
         if(downPressed){        
          distance+=5;
          soilMove+=5;
-          println(a);
          if(distance==80){
             move = false;
             groundhogY = groundhogDownY;
